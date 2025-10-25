@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 // api instance and helper to set token header
 import api, { setAuthToken } from "../api/axios";
 
-export default function Login() {
+export default function Login({ setLoggedIn }) {
   // form state: hum email aur password track karenge
   const [form, setForm] = useState({ email: "", password: "" });
 
@@ -65,7 +65,10 @@ export default function Login() {
       // 2) axios default header me token set karo so future requests automatic attach ho
       setAuthToken(token);
 
-      // 3) redirect user to the page they wanted to visit (or home)
+      // 3) Update the loggedIn state in App.jsx
+      setLoggedIn(true);
+
+      // 4) redirect user to the page they wanted to visit (or home)
       navigate(from, { replace: true });
     } catch (err) {
       // error handling: agar backend ne validation/credential error bheja to show it

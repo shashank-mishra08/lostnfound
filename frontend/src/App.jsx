@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./Components/Navbar";        // abhi agar file missing ho to aage me dunga
+import Navbar from "./Components/Navbar";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -16,18 +16,26 @@ import EditItem from "./pages/EditItem";
 import MyMatches from "./pages/MyMatches";
 import Notifications from "./pages/Notifications.jsx";
 import ContactRequests from "./pages/ContactRequests.jsx";
- import MyContactRequests from "./pages/MyContactRequests.jsx";
-
+import MyContactRequests from "./pages/MyContactRequests.jsx";
 
 export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setLoggedIn(true);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <div className="container mx-auto p-4">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login setLoggedIn={setLoggedIn} />} />
           <Route path="/lost" element={<LostItems />} />
           <Route path="/found" element={<FoundItems />} />
           <Route path="/about" element={<About />} />

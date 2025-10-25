@@ -13,9 +13,8 @@ import useNotificationsPoll from "../hooks/useNotificationsPoll"; // ✅ NEW: be
 import NotificationDropdown from "./NotificationDropdown";        // ✅ NEW
 
 
-export default function Navbar() {
+export default function Navbar({ loggedIn, setLoggedIn }) {
   const [open, setOpen] = useState(false); // mobile menu toggle
-  const [loggedIn, setLoggedIn] = useState(false); // quick auth flag for UI
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [isNotifOpen, setNotifOpen] = useState(false); 
@@ -24,12 +23,6 @@ export default function Navbar() {
 
   // 🔔 NEW: notifications polling (30s). loading ko badge flicker avoid karne ke liye use kar rahe.
   const { unread, loading: notifLoading } = useNotificationsPoll(30000);
-
-  // on mount check token presence (fast UI-check)
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setLoggedIn(Boolean(token));
-  }, []);
 
   // close profile menu on click outside
   useEffect(() => {
@@ -139,8 +132,6 @@ export default function Navbar() {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-800 z-50">
                       <Link to="/my-lost" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setProfileMenuOpen(false)}>My Lost Items</Link>
                       <Link to="/my-found" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setProfileMenuOpen(false)}>My Found Items</Link>
-                       <Link to="/contact-requests" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setProfileMenuOpen(false)}>Contact Requests</Link>
-                       <Link to="/my-contact-requests" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setProfileMenuOpen(false)}>My Contact Requests</Link>
                       <div className="border-t border-gray-200 my-1"></div>
                       <button onClick={handleLogout} className="w-full text-left block px-4 py-2 text-sm hover:bg-gray-100">
                         Logout
