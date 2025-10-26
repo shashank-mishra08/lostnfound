@@ -1,4 +1,3 @@
-
 const User = require('../models/user'); // Iski zaroorat shayad aage pade
 const FoundItem = require('../models/FoundItem'); // Naye model ko import karein
 const LostItem = require('../models/LostItems');
@@ -7,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { escapeRegex } = require('../utils/regex')
 const Notification = require('../models/Notification');
+const cloudinary = require('../config/cloudinary.jsx');
 
 // Helper to remove file if it exists
 const removeFileIfExists = async (filePath) => {
@@ -211,10 +211,10 @@ const postLostItem = async (req, res, next) => {
     console.log("Received req.body:", req.body);
     console.log("Received req.file:", req.file);
 
-    // --------- NEW: handle file ---------
-    let imagePath = null;
+    let imageUrl = null;
     if (req.file) {
-      imagePath = `uploads/images/${req.file.filename}`;
+      const result = await cloudinary.uploader.upload(req.file.path);
+      imageUrl = result.secure_url;
     }
 
     // Handle field mapping for lost items
@@ -243,7 +243,7 @@ const postLostItem = async (req, res, next) => {
       lostDate,
       lostLocation: parsedLocation,
       owner: req.user.id,    // owner set from auth
-      image: imagePath,      // <-- image ko string path me store karna
+      image: imageUrl,      // <-- image ko string path me store karna
     };
 
     console.log("Data for lost item creation:", lostItemData);
