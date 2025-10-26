@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { escapeRegex } = require('../utils/regex')
 const Notification = require('../models/Notification');
-const cloudinary = require('../config/cloudinary.jsx');
+const cloudinary = require('../config/cloudinary.js');
 
 // Helper to remove file if it exists
 const removeFileIfExists = async (filePath) => {
@@ -347,9 +347,18 @@ const postFoundItem = async (req, res, next) => {
     }
 
     // 5) Handle multer file => convert to string path expected by schema
-    let imagePath = null;
+    let imageUrl = null;
     if (req.file) {
-      imagePath = `uploads/images/${req.file.filename}`;
+      try {
+        const result = await cloudinary.uploader.upload(req.file.path);
+        imageUrl = result.secure_url;
+        // Delete the file from local storage after upload
+        fs.unlinkSync(req.file.path);
+      } catch (error) {
+        console.error("Error uploading to Cloudinary:", error);
+        // Decide if you want to continue without an image or return an error
+        return res.status(500).json({ message: "Image upload failed.", error: error.message });
+      }
     }
 
     // 6) Build the document to save (explicit fields — avoid spreading raw req.body)
@@ -362,7 +371,7 @@ const postFoundItem = async (req, res, next) => {
         address: String(parsedLocation.address || "").trim()
       },
       finder: req.user.id, // protected route ensures this exists
-      image: imagePath,
+      image: imageUrl,
       // status is defaulted by schema so we don't need to set it
     };
 
