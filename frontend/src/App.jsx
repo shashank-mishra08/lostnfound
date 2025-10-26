@@ -49,8 +49,7 @@ export default function App() {
            <Route path="/my-contact-requests" element={<MyContactRequests />} />
           {/* yaha naya route add karo */}
         {/* type aur :id ye URL parameters hain */}
-        {/* Example: /items/edit/lost/6500abcd1234 OR /items/edit/found/6500abcd5678 */}
-        <Route path="/items/edit/:type/:id" element={<EditItem />} />    
+        {/* Example: /items/edit/lost/6500abcd1234 OR /items/edit/found/6500abcd5678 */}    
           <Route
             path="/upload"
             element={
